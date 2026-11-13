@@ -5,6 +5,9 @@ from pathlib import Path
 import subprocess
 import sys
 
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--godot', required=True)
 parser.add_argument('--expect-no-device', action='store_true')
