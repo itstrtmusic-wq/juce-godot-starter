@@ -1,0 +1,8 @@
+[configuration]
+entry_symbol = "juce_bridge_library_init"
+compatibility_minimum = "4.5"
+reloadable = false
+
+[libraries]
+windows.x86_64 = "res://addons/juce_bridge/bin/juce_bridge.dll"
+linux.x86_64 = "res://addons/juce_bridge/bin/juce_bridge.so"

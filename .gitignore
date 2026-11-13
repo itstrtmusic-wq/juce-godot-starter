@@ -1,0 +1,4 @@
+build/
+demo/.godot/
+demo/addons/juce_bridge/bin/*
+!demo/addons/juce_bridge/bin/.gitkeep

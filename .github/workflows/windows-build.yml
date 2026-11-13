@@ -1,0 +1,34 @@
+name: Windows addon build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build native extension and run offline audio tests
+        shell: pwsh
+        run: ./build_windows.ps1 -Configuration Release
+      - name: Package demo and compiled addon
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item README.md, VALIDATION.md -Destination demo
+          Compress-Archive -Path demo/* -DestinationPath dist/juce-godot-windows-x86_64.zip
+      - name: Upload Windows demo and addon
+        uses: actions/upload-artifact@v4
+        with:
+          name: juce-godot-windows-x86_64
+          path: dist/juce-godot-windows-x86_64.zip
+          if-no-files-found: error
