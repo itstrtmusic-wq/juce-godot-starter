@@ -1,8 +1,12 @@
 #include "juce_engine.h"
 #include <godot_cpp/godot.hpp>
 using namespace godot;
+void register_juce_api();
 void initialize_bridge(ModuleInitializationLevel level) {
-    if (level == MODULE_INITIALIZATION_LEVEL_SCENE) ClassDB::register_class<JuceEngine>();
+    if (level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+        ClassDB::register_class<JuceEngine>();
+        register_juce_api();
+    }
 }
 void uninitialize_bridge(ModuleInitializationLevel) {}
 extern "C" {

@@ -1,12 +1,12 @@
 config_version=5
 
 [application]
-config/name="JUCE GDScript Bridge Demo"
+config/name="JUCE GDScript API · DSP Networks"
 run/main_scene="res://main.tscn"
 
 [display]
-window/size/viewport_width=640
-window/size/viewport_height=600
+window/size/viewport_width=800
+window/size/viewport_height=800
 
 [rendering]
 renderer/rendering_method="gl_compatibility"

@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: windows-2022
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,12 +21,25 @@ jobs:
       - name: Build native extension and run offline audio tests
         shell: pwsh
         run: ./build_windows.ps1 -Configuration Release
-      - name: Package demo and compiled addon
+      - name: Download baseline Godot editor for integration tests
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path dist | Out-Null
-          Copy-Item README.md, VALIDATION.md -Destination demo
-          Compress-Archive -Path demo/* -DestinationPath dist/juce-godot-windows-x86_64.zip
+          $url = 'https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_win64.exe.zip'
+          Invoke-WebRequest -Uri $url -OutFile "$env:RUNNER_TEMP/godot.zip"
+          Expand-Archive -Path "$env:RUNNER_TEMP/godot.zip" -DestinationPath "$env:RUNNER_TEMP/godot"
+      - name: Verify GDScript API, round trips and example scenes
+        shell: pwsh
+        run: |
+          python tools/run_godot_tests.py --godot "$env:RUNNER_TEMP/godot/Godot_v4.5.1-stable_win64_console.exe"
+          if ($LASTEXITCODE -ne 0) { throw 'Godot integration tests failed' }
+      - name: Package demo, compiled addon and API documentation
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/package | Out-Null
+          Copy-Item -Recurse demo, docs, bindings -Destination dist/package
+          Copy-Item README.md, VALIDATION.md -Destination dist/package
+          Remove-Item -Recurse -Force dist/package/demo/.godot -ErrorAction SilentlyContinue
+          Compress-Archive -Path dist/package/* -DestinationPath dist/juce-godot-windows-x86_64.zip
       - name: Upload Windows demo and addon
         uses: actions/upload-artifact@v4
         with:

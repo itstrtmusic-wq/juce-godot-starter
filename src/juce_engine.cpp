@@ -43,7 +43,7 @@ bool JuceEngine::start_audio(const String& output_device, double sample_rate, in
         last_error = "Invalid sample rate or buffer size.";
     } else {
         juce::AudioDeviceManager::AudioDeviceSetup setup;
-        setup.outputDeviceName = juce::String(output_device.utf8().get_data());
+        setup.outputDeviceName = juce::String::fromUTF8(output_device.utf8().get_data());
         setup.sampleRate = sample_rate;
         setup.bufferSize = buffer_size;
         setup.useDefaultInputChannels = false;

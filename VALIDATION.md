@@ -1,11 +1,17 @@
-# Validation record
+# Validation
 
-Validated in this session on Linux x86_64 with GCC 14.2, CMake 4.4.4, JUCE 8.0.9, godot-cpp 4.5 bindings and Godot 4.6.3.
+## API and DSP-network release 0.2
 
-- Native bridge compiled and linked successfully, with Linux audio-device backends explicitly disabled for headless validation.
-- CTest tone test passed: frequency, RMS, peak, stereo, mute, gain clamping, null output channels.
-- Godot imported the project and loaded the extension.
-- GDScript smoke test passed: registration, parameter calls, invalid startup, error signal, shutdown, no-device enumeration and no-device startup failure.
-- Demo main scene ran headlessly for five frames with no script errors.
+Local validation uses Linux x86_64, GCC 14.2, JUCE 8.0.9, godot-cpp 4.5 bindings and Godot 4.6.3. Linux audio-device backends are deliberately disabled in this headless validation build.
 
-Not verified: Windows compilation, Windows 11 audio playback, Godot 4.7, real device latency, device hot-plug behavior. No Windows DLL is included. Run build_windows.ps1 on Windows before importing the addon.
+Native tests check tone behavior and DSP-graph gain values, multi-block rendering, parallel routing, cycle rejection, parameter validation, active-state restrictions, delay timing and feedback. Each supported DSP node is rendered under an operator-new allocation audit and checked for finite output. A manifest test checks that generated registration code and API documentation match bindings/api.json.
+
+GDScript integration checks every declared class/method, buffer ownership, invalid MIDI bytes, MIDI file timing, WAV encode/decode, UTF-8 paths/text, file overwrite protection, standalone processors, graph processing/introspection, device startup failure, legacy class registration, the offline rendering example and main-scene startup. Tests check output markers and engine errors as well as exit status, because a failed Godot assertion alone may leave the editor process running.
+
+The Windows workflow builds with MSVC on windows-2022, runs native tests, downloads Godot 4.5.1 and runs GDScript integration tests before uploading its artifact. **Only a successful workflow run for the commit being downloaded establishes those Windows checks have passed.**
+
+Not tested here: Windows 11 audio hardware, MIDI hardware, microphone monitoring, exact Godot 4.7 compatibility, latency under load, exported PCK resource access, hot-plug behavior or every possible graph/parameter combination. There are no real-time GDScript audio callbacks or plugin-hosting bindings in this release.
+
+## Original 0.1 starter
+
+The original tone starter compiled and passed its offline audio tests on Windows in the first repository workflow. It also loaded and passed its smoke test on Linux with Godot 4.6.3. That older result does not validate the newly added API classes; use the checks above for version 0.2.

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(juce_godot_bridge VERSION 0.1.0 LANGUAGES CXX)
+project(juce_godot_bridge VERSION 0.2.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 include(FetchContent)
@@ -19,9 +19,11 @@ add_library(bridge_juce STATIC
     ${juce_SOURCE_DIR}/modules/juce_core/juce_core_CompilationTime.cpp
     ${juce_SOURCE_DIR}/modules/juce_events/juce_events.cpp
     ${juce_SOURCE_DIR}/modules/juce_audio_basics/juce_audio_basics.cpp
-    ${juce_SOURCE_DIR}/modules/juce_audio_devices/juce_audio_devices.cpp)
+    ${juce_SOURCE_DIR}/modules/juce_audio_devices/juce_audio_devices.cpp
+    ${juce_SOURCE_DIR}/modules/juce_audio_formats/juce_audio_formats.cpp
+    ${juce_SOURCE_DIR}/modules/juce_dsp/juce_dsp.cpp)
 target_include_directories(bridge_juce PUBLIC ${juce_SOURCE_DIR}/modules)
-target_compile_definitions(bridge_juce PUBLIC JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1 JUCE_STANDALONE_APPLICATION=0 JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_MODAL_LOOPS_PERMITTED=0)
+target_compile_definitions(bridge_juce PUBLIC JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1 JUCE_STANDALONE_APPLICATION=0 JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0 JUCE_MODAL_LOOPS_PERMITTED=0 JUCE_USE_WINDOWS_MEDIA_FORMAT=0)
 if(WIN32)
     target_link_libraries(bridge_juce PUBLIC winmm ole32 oleaut32 uuid ws2_32 version advapi32 shlwapi)
 elseif(UNIX AND NOT APPLE)
@@ -36,7 +38,7 @@ elseif(UNIX AND NOT APPLE)
 else()
     message(FATAL_ERROR "This starter targets Windows and Linux validation only")
 endif()
-add_library(juce_bridge SHARED src/juce_engine.cpp src/register_types.cpp)
+add_library(juce_bridge SHARED src/juce_engine.cpp src/register_types.cpp src/juce_api.cpp src/dsp_graph.cpp src/juce_dsp_network.cpp src/generated_bindings.cpp)
 target_link_libraries(juce_bridge PRIVATE godot-cpp bridge_juce)
 set_target_properties(juce_bridge PROPERTIES PREFIX "" OUTPUT_NAME "juce_bridge"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/demo/addons/juce_bridge/bin"
@@ -49,3 +51,11 @@ add_executable(tone_test tests/tone_test.cpp)
 target_include_directories(tone_test PRIVATE src)
 target_link_libraries(tone_test PRIVATE bridge_juce)
 add_test(NAME tone_test COMMAND tone_test)
+
+add_executable(dsp_graph_test tests/dsp_graph_test.cpp src/dsp_graph.cpp)
+target_include_directories(dsp_graph_test PRIVATE src)
+target_link_libraries(dsp_graph_test PRIVATE bridge_juce)
+add_test(NAME dsp_graph_test COMMAND dsp_graph_test)
+
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+add_test(NAME bindings_manifest_current COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tools/generate_bindings.py" --check)
