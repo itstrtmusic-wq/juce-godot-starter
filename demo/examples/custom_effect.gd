@@ -2,10 +2,12 @@ extends Node
 ## Attach to a node to run a custom native effect on your default live audio input.
 ## No C++ edits or GDScript audio-thread callback are needed.
 
-var network := JuceDSPNetwork.new()
-var device := JuceAudioDeviceManager.new()
+var network: JuceDSPNetwork
+var device: JuceAudioDeviceManager
 
 func _ready() -> void:
+    network = JuceDSPNetwork.new()
+    device = JuceAudioDeviceManager.new()
     network.add_node("low_cut", "high_pass")
     network.add_node("drive", "tanh")
     network.add_node("delay", "delay")
@@ -38,4 +40,5 @@ func set_drive(amount: float) -> void:
     network.set_parameter("drive", "drive", amount)
 
 func _exit_tree() -> void:
-    device.stop_audio()
+    if device != null:
+        device.stop_audio()

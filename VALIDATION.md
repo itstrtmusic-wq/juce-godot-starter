@@ -8,6 +8,8 @@ Native tests check tone behavior and DSP-graph gain values, multi-block renderin
 
 GDScript integration checks every declared class/method, buffer ownership, invalid MIDI bytes, MIDI file timing, WAV encode/decode, UTF-8 paths/text, file overwrite protection, standalone processors, graph processing/introspection, device startup failure, legacy class registration, the offline rendering example and main-scene startup. Tests check output markers and engine errors as well as exit status, because a failed Godot assertion alone may leave the editor process running.
 
+The integration runner also checks a fresh empty project and a fresh extension-only project. Editor checks allow bounded startup iterations before exit to avoid Godot's documented first-import documentation race ([Godot #111048](https://github.com/godotengine/godot/issues/111048)); the API and DSP tests remain enabled.
+
 The Windows workflow builds with MSVC on windows-2022, runs native tests, downloads Godot 4.5.1 and runs GDScript integration tests before uploading its artifact. **Only a successful workflow run for the commit being downloaded establishes those Windows checks have passed.**
 
 Not tested here: Windows 11 audio hardware, MIDI hardware, microphone monitoring, exact Godot 4.7 compatibility, latency under load, exported PCK resource access, hot-plug behavior or every possible graph/parameter combination. There are no real-time GDScript audio callbacks or plugin-hosting bindings in this release.

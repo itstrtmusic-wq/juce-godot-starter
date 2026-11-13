@@ -1,7 +1,7 @@
 extends Control
 
 var network: JuceDSPNetwork
-var device := JuceAudioDeviceManager.new()
+var device: JuceAudioDeviceManager
 var status: Label
 var meter: ProgressBar
 var outputs: OptionButton
@@ -10,6 +10,7 @@ var source: OptionButton
 var controls := {"frequency": 220.0, "cutoff": 1800.0, "drive": 1.0, "wet": 0.15, "level": -12.0}
 
 func _ready() -> void:
+    device = JuceAudioDeviceManager.new()
     var scroll := ScrollContainer.new()
     scroll.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     add_child(scroll)
@@ -116,8 +117,9 @@ func _update_parameters() -> void:
     network.set_parameter("level", "gain_db", controls.level)
 
 func _process(_delta: float) -> void:
-    if is_instance_valid(meter):
+    if is_instance_valid(meter) and device != null:
         meter.value = device.get_peak()
 
 func _exit_tree() -> void:
-    device.stop_audio()
+    if device != null:
+        device.stop_audio()

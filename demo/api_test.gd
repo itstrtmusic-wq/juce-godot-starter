@@ -5,6 +5,7 @@ func _initialize() -> void:
     assert(not manifest.complete_juce_wrapper)
     assert(manifest.version == "0.2.0")
     for cls in manifest.classes:
+        print("Checking JUCE class: ", cls.name)
         assert(ClassDB.class_exists(cls.name), "Missing class: " + cls.name)
         var instance: Object = ClassDB.instantiate(cls.name)
         for method in cls.methods:

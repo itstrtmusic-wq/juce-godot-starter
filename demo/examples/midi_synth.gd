@@ -2,12 +2,15 @@ extends Node
 ## A monophonic MIDI synth assembled from native DSP nodes in GDScript.
 ## Connect a MIDI controller before running this example.
 
-var network := JuceDSPNetwork.new()
-var audio := JuceAudioDeviceManager.new()
-var midi := JuceMidiInput.new()
+var network: JuceDSPNetwork
+var audio: JuceAudioDeviceManager
+var midi: JuceMidiInput
 var held_note := -1
 
 func _ready() -> void:
+    network = JuceDSPNetwork.new()
+    audio = JuceAudioDeviceManager.new()
+    midi = JuceMidiInput.new()
     network.add_node("osc", "oscillator")
     network.add_node("envelope", "adsr")
     network.add_node("filter", "low_pass")
@@ -28,6 +31,8 @@ func _ready() -> void:
         push_error(midi.get_last_error())
 
 func _process(_delta: float) -> void:
+    if midi == null:
+        return
     for message in midi.read_events():
         if message.is_note_on():
             held_note = message.get_note_number()
@@ -38,5 +43,7 @@ func _process(_delta: float) -> void:
             held_note = -1
 
 func _exit_tree() -> void:
-    midi.close_device()
-    audio.stop_audio()
+    if midi != null:
+        midi.close_device()
+    if audio != null:
+        audio.stop_audio()
