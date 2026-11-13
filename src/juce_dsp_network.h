@@ -25,7 +25,6 @@ public:
 };
 class JuceAudioDeviceManager : public RefCounted, private juce::AudioIODeviceCallback {
     GDCLASS(JuceAudioDeviceManager, RefCounted)
-    juce::ScopedJuceInitialiser_GUI runtime;
     juce::AudioDeviceManager devices;
     Ref<JuceDSPNetwork> network;
     std::atomic<bool> running{false};

@@ -1,4 +1,4 @@
-param([ValidateSet("Debug", "Release")][string]$Configuration = "Release")
+param([ValidateSet("Debug", "Release", "RelWithDebInfo")][string]$Configuration = "Release")
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 foreach ($tool in @("cmake", "git", "python")) {

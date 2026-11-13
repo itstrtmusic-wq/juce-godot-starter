@@ -236,7 +236,6 @@ public:
 };
 class JuceMidiInput : public RefCounted, private juce::MidiInputCallback {
     GDCLASS(JuceMidiInput, RefCounted)
-    juce::ScopedJuceInitialiser_GUI runtime;
     std::unique_ptr<juce::MidiInput> device;
     juce::CriticalSection mutex;
     std::deque<juce::MidiMessage> messages;
@@ -256,7 +255,6 @@ public:
 };
 class JuceMidiOutput : public RefCounted {
     GDCLASS(JuceMidiOutput, RefCounted)
-    juce::ScopedJuceInitialiser_GUI runtime;
     std::unique_ptr<juce::MidiOutput> device;
     String error;
 protected: static void _bind_methods();

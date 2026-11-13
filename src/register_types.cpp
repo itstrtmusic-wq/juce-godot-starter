@@ -2,13 +2,20 @@
 #include <godot_cpp/godot.hpp>
 using namespace godot;
 void register_juce_api();
+namespace {
+// One JUCE runtime per loaded extension, initialized on Godot's main thread.
+std::unique_ptr<juce::ScopedJuceInitialiser_GUI> juce_runtime;
+}
 void initialize_bridge(ModuleInitializationLevel level) {
     if (level == MODULE_INITIALIZATION_LEVEL_SCENE) {
+        juce_runtime = std::make_unique<juce::ScopedJuceInitialiser_GUI>();
         ClassDB::register_class<JuceEngine>();
         register_juce_api();
     }
 }
-void uninitialize_bridge(ModuleInitializationLevel) {}
+void uninitialize_bridge(ModuleInitializationLevel level) {
+    if (level == MODULE_INITIALIZATION_LEVEL_SCENE) juce_runtime.reset();
+}
 extern "C" {
 GDExtensionBool GDE_EXPORT juce_bridge_library_init(GDExtensionInterfaceGetProcAddress get_proc_address,
     GDExtensionClassLibraryPtr library, GDExtensionInitialization* initialization) {

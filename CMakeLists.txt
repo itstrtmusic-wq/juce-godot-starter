@@ -41,6 +41,7 @@ endif()
 add_library(juce_bridge SHARED src/juce_engine.cpp src/register_types.cpp src/juce_api.cpp src/dsp_graph.cpp src/juce_dsp_network.cpp src/generated_bindings.cpp)
 target_link_libraries(juce_bridge PRIVATE godot-cpp bridge_juce)
 set_target_properties(juce_bridge PROPERTIES PREFIX "" OUTPUT_NAME "juce_bridge"
+    PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/demo/addons/juce_bridge/bin"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/demo/addons/juce_bridge/bin"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/demo/addons/juce_bridge/bin")
 foreach(config DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)

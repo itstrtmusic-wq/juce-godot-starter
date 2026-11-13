@@ -8,8 +8,6 @@
 namespace godot {
 class JuceEngine : public Node, private juce::AudioIODeviceCallback {
     GDCLASS(JuceEngine, Node)
-    // Destruction order keeps JUCE alive until after device shutdown.
-    juce::ScopedJuceInitialiser_GUI juce_runtime;
     juce::AudioDeviceManager devices;
     Tone tone;
     std::atomic<float> frequency{440.0f}, gain{0.05f}, peak{0.0f};
