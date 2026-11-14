@@ -21,17 +21,21 @@ jobs:
       - name: Build native extension and run offline audio tests
         shell: pwsh
         run: ./build_windows.ps1 -Configuration RelWithDebInfo
-      - name: Download baseline Godot editor for integration tests
+      - name: Download Godot editors for compatibility and target-version tests
         shell: pwsh
         run: |
-          $url = 'https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_win64.exe.zip'
-          Invoke-WebRequest -Uri $url -OutFile "$env:RUNNER_TEMP/godot.zip"
-          Expand-Archive -Path "$env:RUNNER_TEMP/godot.zip" -DestinationPath "$env:RUNNER_TEMP/godot"
-      - name: Verify GDScript API, round trips and example scenes
+          foreach ($version in @('4.5.1', '4.7')) {
+            $url = "https://github.com/godotengine/godot/releases/download/$version-stable/Godot_v$version-stable_win64.exe.zip"
+            Invoke-WebRequest -Uri $url -OutFile "$env:RUNNER_TEMP/godot-$version.zip"
+            Expand-Archive -Path "$env:RUNNER_TEMP/godot-$version.zip" -DestinationPath "$env:RUNNER_TEMP/godot-$version"
+          }
+      - name: Verify API, visual editor and user interactions in Godot 4.5.1 and 4.7
         shell: pwsh
         run: |
-          python tools/run_godot_tests.py --godot "$env:RUNNER_TEMP/godot/Godot_v4.5.1-stable_win64_console.exe"
-          if ($LASTEXITCODE -ne 0) { throw 'Godot integration tests failed' }
+          foreach ($version in @('4.5.1', '4.7')) {
+            python tools/run_godot_tests.py --godot "$env:RUNNER_TEMP/godot-$version/Godot_v$version-stable_win64_console.exe"
+            if ($LASTEXITCODE -ne 0) { throw "Godot $version integration tests failed" }
+          }
       - name: Package demo, compiled addon and API documentation
         shell: pwsh
         run: |

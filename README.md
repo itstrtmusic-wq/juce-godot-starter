@@ -1,6 +1,6 @@
 # JUCE for GDScript — API + DSP networks
 
-Version **0.3.0** exposes **22 reference-counted classes and 209 methods**, plus the legacy tone-demo class. Build your own audio tools in GDScript using JUCE buffers, MIDI, files, envelopes, filters, reverb, chorus, phaser, dynamics and editable native DSP networks with modulation and patch persistence.
+Version **0.4.0** adds a visual graph editor and exposes **22 reference-counted classes and 209 methods**, plus the legacy tone-demo class. Build your own audio tools in GDScript using JUCE buffers, MIDI, files, envelopes, filters, reverb, chorus, phaser, dynamics and editable native DSP networks with modulation and patch persistence.
 
 This is a growing, explicitly documented JUCE binding layer. It is **not the entire JUCE C++ API**. GUI/window classes, AudioProcessor/AudioProcessorGraph, third-party plugin hosting, arbitrary C++ templates and GDScript callbacks on real-time audio threads are not bound. The custom `JuceDSPNetwork` is a graph of native JUCE processors; it does not claim to wrap JUCE's AudioProcessorGraph.
 
@@ -8,6 +8,21 @@ This is a growing, explicitly documented JUCE binding layer. It is **not the ent
 - [DSP networks: nodes, parameters, routing and live audio](docs/DSP_NETWORKS.md)
 - [Binding manifest](bindings/api.json), also available at runtime through `JUCE.get_api_manifest()`
 - [Executable GDScript examples](demo/examples)
+
+## Visual effects editor
+
+![JUCE graph editor](docs/graph-editor.png)
+
+Run **demo/project.godot** for the node canvas, or click **JUCE Graph** in Godot's main-screen toolbar. The demo enables the plugin; in another project, enable **JUCE DSP Graph** in Project Settings → Plugins after copying the addon.
+
+- Search and place all 26 DSP node types.
+- Wire teal audio paths and violet parameter modulation.
+- Edit node parameters, cable gain, modulation depth/offset and source channel.
+- Preview through JUCE with optional live input and an output meter.
+- Undo/redo, arrange/fit, save positions/titles in `.jucegraph` files, and export native DSP JSON.
+- Reuse the graph-editor scene in your own DAW interface.
+
+Read the [visual editor guide](docs/GRAPH_EDITOR.md). The original slider demo remains in `demo/slider_demo.tscn`.
 
 ## New in 0.3: modulation, processors and patches
 
@@ -93,8 +108,8 @@ Standalone processor wrappers run synchronously/offline. The DSP network owns se
 1. Open [Actions → Windows addon build](https://github.com/itstrtmusic-wq/juce-godot-starter/actions/workflows/windows-build.yml).
 2. Choose the latest successful run, then download the **juce-godot-windows-x86_64** artifact. You may need to sign in.
 3. Extract the artifact and the packaged ZIP inside it. Import **demo/project.godot**.
-4. Run the demo. It assembles an oscillator/input → filter → distortion → reverb → gain → clip network entirely from GDScript. Sliders control native processor parameters.
-5. For another project, copy **demo/addons/juce_bridge** into that project's `addons` folder, then reopen the editor. No EditorPlugin needs enabling.
+4. Run the demo to open the visual graph editor. The initial oscillator → low-pass → gain network includes an LFO modulation cable; add processors and wire your own effect.
+5. For another project, copy **demo/addons/juce_bridge** into that project's `addons` folder, then reopen the editor. The native API loads automatically. Enable the optional JUCE DSP Graph plugin if you want its editor tab.
 
 The build includes the DLL, so no C++ tools are needed to use it. Close Godot before replacing/rebuilding the DLL; native hot reload is disabled. Live microphone monitoring should use headphones to avoid acoustic feedback.
 
@@ -112,7 +127,7 @@ CMake downloads pinned JUCE 8.0.9 and godot-cpp 4.5 sources. The script compiles
 python tools/run_godot_tests.py --godot "C:\Path\To\Godot.exe"
 ```
 
-The build targets x86_64 and standard single-precision Godot. GDExtension uses a 4.5 baseline for intended forward compatibility. **Your Godot 4.7 editor and Windows 11 audio hardware still need direct verification.** The validation record describes versions actually tested.
+The build targets x86_64 and standard single-precision Godot. GDExtension uses a 4.5 baseline for intended forward compatibility. The workflow checks the API and visual editor in both Godot 4.5.1 and Godot 4.7. **Your Windows 11 audio hardware still needs direct verification.** The validation record describes the checks and their scope.
 
 ## What can run where
 
