@@ -1,6 +1,6 @@
 # JUCE for GDScript — API + DSP networks
 
-Version **0.2.0** exposes **17 reference-counted classes and 166 methods**, plus the legacy tone-demo class. Build your own audio tools in GDScript using JUCE buffers, MIDI, files, envelopes, filters, reverb and editable native DSP networks.
+Version **0.3.0** exposes **22 reference-counted classes and 209 methods**, plus the legacy tone-demo class. Build your own audio tools in GDScript using JUCE buffers, MIDI, files, envelopes, filters, reverb, chorus, phaser, dynamics and editable native DSP networks with modulation and patch persistence.
 
 This is a growing, explicitly documented JUCE binding layer. It is **not the entire JUCE C++ API**. GUI/window classes, AudioProcessor/AudioProcessorGraph, third-party plugin hosting, arbitrary C++ templates and GDScript callbacks on real-time audio threads are not bound. The custom `JuceDSPNetwork` is a graph of native JUCE processors; it does not claim to wrap JUCE's AudioProcessorGraph.
 
@@ -8,6 +8,24 @@ This is a growing, explicitly documented JUCE binding layer. It is **not the ent
 - [DSP networks: nodes, parameters, routing and live audio](docs/DSP_NETWORKS.md)
 - [Binding manifest](bindings/api.json), also available at runtime through `JUCE.get_api_manifest()`
 - [Executable GDScript examples](demo/examples)
+
+## New in 0.3: modulation, processors and patches
+
+- Native LFO nodes can drive effect parameters through `connect_parameter()`. Audio and parameter routes share cycle detection; scalar base settings remain independent from the modulated values.
+- New graph nodes: `lfo`, `chorus`, `phaser`, `limiter` and `noise_gate` — **26 node types** total.
+- Standalone `JuceChorus`, `JucePhaser`, `JuceCompressor`, `JuceLimiter` and `JuceNoiseGate` expose JUCE DSP processors directly to GDScript.
+- `export_patch()`, `load_patch()`, `save_patch()` and `load_patch_file()` save/reconstruct networks. Invalid loads leave the current graph untouched. See the [patch format](docs/PATCH_FORMAT.md) in `docs` below.
+
+```gdscript
+# Add this to a network containing a node named "filter" with a frequency parameter.
+fx.add_node("slow", "lfo")
+fx.set_parameter("slow", "rate_hz", 0.75)
+fx.connect_parameter("slow", "filter", "frequency", 1500.0)
+# Each block: cutoff = base cutoff + LFO × 1500 Hz, clamped to the parameter's range.
+fx.save_patch("user://my_effect.json")
+```
+
+Modulation uses the first sample of a source channel once per audio block. This is control-rate modulation; audio-rate parameter modulation and sample-accurate automation are not implemented. `multiply` still supports sample-by-sample signal multiplication. Read the [modulation guide](docs/DSP_NETWORKS.md#parameter-modulation) and [patch format](docs/PATCH_FORMAT.md) for full semantics.
 
 ## Write your effect in GDScript
 
@@ -45,7 +63,7 @@ fx.set_parameter("filter", "frequency", 900.0)
 device.stop_audio()
 ```
 
-In this example the offline buffer starts silent. Use `JuceAudioFormatManager.read_file()` to get recorded audio, fill channels with PackedFloat32Array, or add an `oscillator` node for a generated source. `demo/examples/offline_processing.gd` renders a complete generated sound into a WAV file. `custom_effect.gd` processes live input with parallel dry and wet paths. `midi_synth.gd` builds a monophonic instrument with an oscillator and ADSR envelope.
+In this example the offline buffer starts silent. Use `JuceAudioFormatManager.read_file()` to get recorded audio, fill channels with PackedFloat32Array, or add an `oscillator` node for a generated source. `demo/examples/offline_processing.gd` renders a complete generated sound into a WAV file. `custom_effect.gd` processes live input with parallel dry and wet paths. `midi_synth.gd` builds a monophonic instrument with an oscillator and ADSR envelope. `modulated_effect.gd` adds a native LFO and chorus; `preset_render.gd` saves/reloads the patch and renders its sound without hardware.
 
 ## General JUCE objects
 
@@ -102,11 +120,11 @@ Use these objects from Godot's main thread. MIDI input queues native messages fo
 
 Audio callbacks execute the prepared DSP network in C++. They do not call GDScript, allocate graph buffers, take graph mutexes, or emit Godot signals. Parameters transfer through lock-free atomic floats. Graph topology is immutable while a device owns it. Parameters update per block; this is not sample-accurate automation. Standalone wrapper objects are not shared with the live graph.
 
-Audio buffers are copied/owned, with no exposed native pointers. Allocation is bounded to 16 million float samples per buffer or graph buffer set. Audio file reads reject files larger than the requested frame limit or allocation limit; streaming audio-file playback is not implemented. WAV writing is explicit about overwrite and uses a temporary file before replacement. Paths accept `res://`, `user://` or filesystem paths; exported `res://` resources inside PCK files must first be copied to `user://` for JUCE to read them.
+Audio buffers are copied/owned, with no exposed native pointers. Each standalone buffer is bounded to 16 million float samples. Graph preparation enforces a 16-million-float buffer estimate, with additional native processor bookkeeping overhead. Audio file reads reject files larger than the requested frame limit or allocation limit; streaming audio-file playback is not implemented. WAV writing is explicit about overwrite and uses a temporary file before replacement. Paths accept `res://`, `user://` or filesystem paths; exported `res://` resources inside PCK files must first be copied to `user://` for JUCE to read them.
 
 ## Extending the API
 
-`bindings/api.json` is the source of truth for names, default arguments and coverage. Implement a wrapper in `src/juce_api.*` or another native source, add its method entries, then run:
+`bindings/api.json` is the source of truth for names, default arguments and coverage. Its reviewed `effect` entries generate the common standalone JUCE processor adapters, range metadata and parameter validation as well. Implement a wrapper in `src/juce_api.*` or another native source, add its method entries, then run:
 
 ```sh
 python tools/generate_bindings.py

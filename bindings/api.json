@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "complete_juce_wrapper": false,
   "classes": [
     {
@@ -1293,6 +1293,80 @@
           "args": [],
           "defaults": [],
           "static": false
+        },
+        {
+          "name": "connect_parameter",
+          "args": [
+            "source",
+            "destination",
+            "parameter",
+            "depth",
+            "offset",
+            "channel"
+          ],
+          "defaults": [
+            "float(1.0)",
+            "float(0.0)",
+            "int(0)"
+          ],
+          "static": false
+        },
+        {
+          "name": "disconnect_parameter",
+          "args": [
+            "source",
+            "destination",
+            "parameter"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_modulation_connections",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_effective_parameters",
+          "args": [
+            "id"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "export_patch",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "load_patch",
+          "args": [
+            "patch"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "save_patch",
+          "args": [
+            "path",
+            "overwrite"
+          ],
+          "defaults": [
+            "false"
+          ],
+          "static": false
+        },
+        {
+          "name": "load_patch_file",
+          "args": [
+            "path"
+          ],
+          "defaults": [],
+          "static": false
         }
       ]
     },
@@ -1370,6 +1444,491 @@
           "static": false
         }
       ]
+    },
+    {
+      "name": "JuceChorus",
+      "juce": "juce::dsp::Chorus<float>",
+      "description": "Owned standalone Chorus processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.",
+      "methods": [
+        {
+          "name": "prepare",
+          "args": [
+            "sample_rate",
+            "max_block_size",
+            "channels"
+          ],
+          "defaults": [
+            "int(512)",
+            "int(2)"
+          ],
+          "static": false
+        },
+        {
+          "name": "set_parameters",
+          "args": [
+            "parameters"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameters",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameter_info",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "reset",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "process",
+          "args": [
+            "buffer"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_last_error",
+          "args": [],
+          "defaults": [],
+          "static": false
+        }
+      ],
+      "effect": {
+        "processor": "juce::dsp::Chorus<float>",
+        "parameters": [
+          {
+            "name": "rate_hz",
+            "setter": "setRate",
+            "default": 1,
+            "min": 0.01,
+            "max": 99,
+            "nyquist": false
+          },
+          {
+            "name": "depth",
+            "setter": "setDepth",
+            "default": 0.25,
+            "min": 0,
+            "max": 1,
+            "nyquist": false
+          },
+          {
+            "name": "centre_delay_ms",
+            "setter": "setCentreDelay",
+            "default": 7,
+            "min": 1,
+            "max": 100,
+            "nyquist": false
+          },
+          {
+            "name": "feedback",
+            "setter": "setFeedback",
+            "default": 0,
+            "min": -0.99,
+            "max": 0.99,
+            "nyquist": false
+          },
+          {
+            "name": "mix",
+            "setter": "setMix",
+            "default": 0.5,
+            "min": 0,
+            "max": 1,
+            "nyquist": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "JucePhaser",
+      "juce": "juce::dsp::Phaser<float>",
+      "description": "Owned standalone Phaser processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.",
+      "methods": [
+        {
+          "name": "prepare",
+          "args": [
+            "sample_rate",
+            "max_block_size",
+            "channels"
+          ],
+          "defaults": [
+            "int(512)",
+            "int(2)"
+          ],
+          "static": false
+        },
+        {
+          "name": "set_parameters",
+          "args": [
+            "parameters"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameters",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameter_info",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "reset",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "process",
+          "args": [
+            "buffer"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_last_error",
+          "args": [],
+          "defaults": [],
+          "static": false
+        }
+      ],
+      "effect": {
+        "processor": "juce::dsp::Phaser<float>",
+        "parameters": [
+          {
+            "name": "rate_hz",
+            "setter": "setRate",
+            "default": 1,
+            "min": 0.01,
+            "max": 99,
+            "nyquist": false
+          },
+          {
+            "name": "depth",
+            "setter": "setDepth",
+            "default": 0.5,
+            "min": 0,
+            "max": 1,
+            "nyquist": false
+          },
+          {
+            "name": "centre_frequency",
+            "setter": "setCentreFrequency",
+            "default": 1300,
+            "min": 20,
+            "max": 20000,
+            "nyquist": true
+          },
+          {
+            "name": "feedback",
+            "setter": "setFeedback",
+            "default": 0,
+            "min": -0.99,
+            "max": 0.99,
+            "nyquist": false
+          },
+          {
+            "name": "mix",
+            "setter": "setMix",
+            "default": 0.5,
+            "min": 0,
+            "max": 1,
+            "nyquist": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "JuceCompressor",
+      "juce": "juce::dsp::Compressor<float>",
+      "description": "Owned standalone Compressor processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.",
+      "methods": [
+        {
+          "name": "prepare",
+          "args": [
+            "sample_rate",
+            "max_block_size",
+            "channels"
+          ],
+          "defaults": [
+            "int(512)",
+            "int(2)"
+          ],
+          "static": false
+        },
+        {
+          "name": "set_parameters",
+          "args": [
+            "parameters"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameters",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameter_info",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "reset",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "process",
+          "args": [
+            "buffer"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_last_error",
+          "args": [],
+          "defaults": [],
+          "static": false
+        }
+      ],
+      "effect": {
+        "processor": "juce::dsp::Compressor<float>",
+        "parameters": [
+          {
+            "name": "threshold_db",
+            "setter": "setThreshold",
+            "default": -18,
+            "min": -100,
+            "max": 0,
+            "nyquist": false
+          },
+          {
+            "name": "ratio",
+            "setter": "setRatio",
+            "default": 4,
+            "min": 1,
+            "max": 100,
+            "nyquist": false
+          },
+          {
+            "name": "attack_ms",
+            "setter": "setAttack",
+            "default": 10,
+            "min": 0.01,
+            "max": 1000,
+            "nyquist": false
+          },
+          {
+            "name": "release_ms",
+            "setter": "setRelease",
+            "default": 100,
+            "min": 0.01,
+            "max": 5000,
+            "nyquist": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "JuceLimiter",
+      "juce": "juce::dsp::Limiter<float>",
+      "description": "Owned standalone Limiter processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.",
+      "methods": [
+        {
+          "name": "prepare",
+          "args": [
+            "sample_rate",
+            "max_block_size",
+            "channels"
+          ],
+          "defaults": [
+            "int(512)",
+            "int(2)"
+          ],
+          "static": false
+        },
+        {
+          "name": "set_parameters",
+          "args": [
+            "parameters"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameters",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameter_info",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "reset",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "process",
+          "args": [
+            "buffer"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_last_error",
+          "args": [],
+          "defaults": [],
+          "static": false
+        }
+      ],
+      "effect": {
+        "processor": "juce::dsp::Limiter<float>",
+        "parameters": [
+          {
+            "name": "threshold_db",
+            "setter": "setThreshold",
+            "default": -1,
+            "min": -100,
+            "max": 0,
+            "nyquist": false
+          },
+          {
+            "name": "release_ms",
+            "setter": "setRelease",
+            "default": 100,
+            "min": 0.01,
+            "max": 5000,
+            "nyquist": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "JuceNoiseGate",
+      "juce": "juce::dsp::NoiseGate<float>",
+      "description": "Owned standalone NoiseGate processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.",
+      "methods": [
+        {
+          "name": "prepare",
+          "args": [
+            "sample_rate",
+            "max_block_size",
+            "channels"
+          ],
+          "defaults": [
+            "int(512)",
+            "int(2)"
+          ],
+          "static": false
+        },
+        {
+          "name": "set_parameters",
+          "args": [
+            "parameters"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameters",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_parameter_info",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "reset",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "process",
+          "args": [
+            "buffer"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_last_error",
+          "args": [],
+          "defaults": [],
+          "static": false
+        }
+      ],
+      "effect": {
+        "processor": "juce::dsp::NoiseGate<float>",
+        "parameters": [
+          {
+            "name": "threshold_db",
+            "setter": "setThreshold",
+            "default": -60,
+            "min": -100,
+            "max": 0,
+            "nyquist": false
+          },
+          {
+            "name": "ratio",
+            "setter": "setRatio",
+            "default": 10,
+            "min": 1,
+            "max": 100,
+            "nyquist": false
+          },
+          {
+            "name": "attack_ms",
+            "setter": "setAttack",
+            "default": 5,
+            "min": 0.01,
+            "max": 1000,
+            "nyquist": false
+          },
+          {
+            "name": "release_ms",
+            "setter": "setRelease",
+            "default": 100,
+            "min": 0.01,
+            "max": 5000,
+            "nyquist": false
+          }
+        ]
+      }
     }
   ]
 }

@@ -1,6 +1,6 @@
 # GDScript binding reference
 
-API version: **0.2.0**. 17 classes and 166 methods are declared below.
+API version: **0.3.0**. 22 classes and 209 methods are declared below.
 
 Generated from `bindings/api.json`. These are explicit supported bindings, not a complete JUCE wrapper. Use `JUCE.get_api_manifest()` to inspect this surface at runtime.
 
@@ -308,6 +308,14 @@ JUCE implementation: `Native graph of JUCE DSP processors`.
 | `get_last_error()` | `—` |
 | `get_nodes()` | `—` |
 | `get_connections()` | `—` |
+| `connect_parameter(source, destination, parameter, depth, offset, channel)` | `float(1.0), float(0.0), int(0)` |
+| `disconnect_parameter(source, destination, parameter)` | `—` |
+| `get_modulation_connections()` | `—` |
+| `get_effective_parameters(id)` | `—` |
+| `export_patch()` | `—` |
+| `load_patch(patch)` | `—` |
+| `save_patch(path, overwrite)` | `false` |
+| `load_patch_file(path)` | `—` |
 
 ## JuceAudioDeviceManager
 
@@ -326,3 +334,118 @@ JUCE implementation: `juce::AudioDeviceManager`.
 | `get_peak()` | `—` |
 | `get_device_info()` | `—` |
 | `get_last_error()` | `—` |
+
+## JuceChorus
+
+Owned standalone Chorus processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.
+
+JUCE implementation: `juce::dsp::Chorus<float>`.
+
+| Method | Defaults for trailing arguments |
+| --- | --- |
+| `prepare(sample_rate, max_block_size, channels)` | `int(512), int(2)` |
+| `set_parameters(parameters)` | `—` |
+| `get_parameters()` | `—` |
+| `get_parameter_info()` | `—` |
+| `reset()` | `—` |
+| `process(buffer)` | `—` |
+| `get_last_error()` | `—` |
+
+| Parameter | Default | Min | Max |
+| --- | --- | --- | --- |
+| `rate_hz` | 1 | 0.01 | 99 |
+| `depth` | 0.25 | 0 | 1 |
+| `centre_delay_ms` | 7 | 1 | 100 |
+| `feedback` | 0 | -0.99 | 0.99 |
+| `mix` | 0.5 | 0 | 1 |
+
+## JucePhaser
+
+Owned standalone Phaser processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.
+
+JUCE implementation: `juce::dsp::Phaser<float>`.
+
+| Method | Defaults for trailing arguments |
+| --- | --- |
+| `prepare(sample_rate, max_block_size, channels)` | `int(512), int(2)` |
+| `set_parameters(parameters)` | `—` |
+| `get_parameters()` | `—` |
+| `get_parameter_info()` | `—` |
+| `reset()` | `—` |
+| `process(buffer)` | `—` |
+| `get_last_error()` | `—` |
+
+| Parameter | Default | Min | Max |
+| --- | --- | --- | --- |
+| `rate_hz` | 1 | 0.01 | 99 |
+| `depth` | 0.5 | 0 | 1 |
+| `centre_frequency` | 1300 | 20 | 20000 |
+| `feedback` | 0 | -0.99 | 0.99 |
+| `mix` | 0.5 | 0 | 1 |
+
+## JuceCompressor
+
+Owned standalone Compressor processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.
+
+JUCE implementation: `juce::dsp::Compressor<float>`.
+
+| Method | Defaults for trailing arguments |
+| --- | --- |
+| `prepare(sample_rate, max_block_size, channels)` | `int(512), int(2)` |
+| `set_parameters(parameters)` | `—` |
+| `get_parameters()` | `—` |
+| `get_parameter_info()` | `—` |
+| `reset()` | `—` |
+| `process(buffer)` | `—` |
+| `get_last_error()` | `—` |
+
+| Parameter | Default | Min | Max |
+| --- | --- | --- | --- |
+| `threshold_db` | -18 | -100 | 0 |
+| `ratio` | 4 | 1 | 100 |
+| `attack_ms` | 10 | 0.01 | 1000 |
+| `release_ms` | 100 | 0.01 | 5000 |
+
+## JuceLimiter
+
+Owned standalone Limiter processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.
+
+JUCE implementation: `juce::dsp::Limiter<float>`.
+
+| Method | Defaults for trailing arguments |
+| --- | --- |
+| `prepare(sample_rate, max_block_size, channels)` | `int(512), int(2)` |
+| `set_parameters(parameters)` | `—` |
+| `get_parameters()` | `—` |
+| `get_parameter_info()` | `—` |
+| `reset()` | `—` |
+| `process(buffer)` | `—` |
+| `get_last_error()` | `—` |
+
+| Parameter | Default | Min | Max |
+| --- | --- | --- | --- |
+| `threshold_db` | -1 | -100 | 0 |
+| `release_ms` | 100 | 0.01 | 5000 |
+
+## JuceNoiseGate
+
+Owned standalone NoiseGate processor. Prepare before processing mono/stereo buffers; larger buffers are split into prepared blocks.
+
+JUCE implementation: `juce::dsp::NoiseGate<float>`.
+
+| Method | Defaults for trailing arguments |
+| --- | --- |
+| `prepare(sample_rate, max_block_size, channels)` | `int(512), int(2)` |
+| `set_parameters(parameters)` | `—` |
+| `get_parameters()` | `—` |
+| `get_parameter_info()` | `—` |
+| `reset()` | `—` |
+| `process(buffer)` | `—` |
+| `get_last_error()` | `—` |
+
+| Parameter | Default | Min | Max |
+| --- | --- | --- | --- |
+| `threshold_db` | -60 | -100 | 0 |
+| `ratio` | 10 | 1 | 100 |
+| `attack_ms` | 5 | 0.01 | 1000 |
+| `release_ms` | 100 | 0.01 | 5000 |

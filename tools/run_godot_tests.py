@@ -41,13 +41,15 @@ for with_extension in (False, True):
             raise SystemExit('Godot host check failed: ' + label)
 checks = [(editor_flags, None),
           (['--script', 'res://api_test.gd'], 'JUCE API:'),
+          (['--script', 'res://expansion_test.gd'], 'JUCE expansion:'),
           (['--script', 'res://smoke_test.gd'], 'GDScript registration'),
           (['--script', 'res://examples/offline_processing.gd'], 'Rendered:'),
+          (['--script', 'res://examples/preset_render.gd'], 'Saved patch and rendered:'),
           (['--quit-after', '5'], None)]
 for tail, marker in checks:
     if '--script' in tail:
         tail = ['--quit-after', '120'] + tail
-    if args.expect_no_device and '--script' in tail and tail[-1] != 'res://examples/offline_processing.gd':
+    if args.expect_no_device and '--script' in tail and tail[-1] in ('res://api_test.gd', 'res://expansion_test.gd', 'res://smoke_test.gd'):
         tail += ['--', '--expect-no-device']
     try:
         result = subprocess.run(common + tail, text=True, encoding='utf-8', errors='replace', stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=90)

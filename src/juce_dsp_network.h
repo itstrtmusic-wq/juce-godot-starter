@@ -15,6 +15,14 @@ public:
     PackedStringArray get_node_ids() const;
     Array get_nodes() const;
     Array get_connections() const;
+    bool connect_parameter(const String& source, const String& destination, const String& parameter, float depth = 1.0f, float offset = 0.0f, int channel = 0);
+    bool disconnect_parameter(const String& source, const String& destination, const String& parameter);
+    Array get_modulation_connections() const;
+    Dictionary get_effective_parameters(const String& id) const;
+    Dictionary export_patch() const;
+    bool load_patch(const Dictionary& patch);
+    bool save_patch(const String& path, bool overwrite = false);
+    bool load_patch_file(const String& path);
     bool set_parameter(const String& id, const String& parameter, float value);
     Dictionary get_parameters(const String& id) const;
     bool prepare(double sample_rate, int max_block_size = 512, int channels = 2);
