@@ -3,7 +3,7 @@ extends SceneTree
 func _initialize() -> void:
     var manifest: Dictionary = JUCE.get_api_manifest()
     assert(not manifest.complete_juce_wrapper)
-    assert(manifest.version == "0.3.0")
+    assert(manifest.version == "0.4.0")
     for cls in manifest.classes:
         print("Checking JUCE class: ", cls.name)
         assert(ClassDB.class_exists(cls.name), "Missing class: " + cls.name)
