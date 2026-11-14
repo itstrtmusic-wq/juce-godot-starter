@@ -988,6 +988,9 @@ func _process(_delta: float) -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
     if not is_visible_in_tree() or not _available or not event is InputEventKey or not event.pressed or event.echo:
         return
+    var focus := get_viewport().gui_get_focus_owner()
+    if focus != null and focus != self and not is_ancestor_of(focus):
+        return
     var command: bool = event.ctrl_pressed or event.meta_pressed
     if command and event.keycode == KEY_Z:
         redo() if event.shift_pressed else undo()

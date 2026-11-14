@@ -132,6 +132,14 @@ func run() -> void:
     await click(slider.get_global_rect().position + Vector2(slider.size.x * 0.32, slider.size.y * 0.5))
     assert(editor.document.network.get_parameters("filter").frequency != old_value, "Inspector slider did not update the native parameter")
     editor._flush_parameter_history()
+    var external := Button.new()
+    external.text = "Host control outside the graph"
+    root.add_child(external)
+    external.grab_focus()
+    var history_before: int = editor.document._cursor
+    await key(KEY_Z, true)
+    assert(editor.document._cursor == history_before, "Graph shortcuts intercepted another host control's input")
+    external.free()
     var capture_path := OS.get_environment("JUCE_GRAPH_CAPTURE")
     if not capture_path.is_empty() and DisplayServer.get_name() != "headless":
         editor.new_network("filter")
