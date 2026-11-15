@@ -4,6 +4,7 @@
 #include <cmath>
 #include <new>
 #include <limits>
+#include <memory>
 
 static bool audit = false;
 static int allocations = 0;
@@ -26,7 +27,9 @@ static int first_sound(const std::vector<float>& samples) {
     return -1;
 }
 int main() {
-    Player a, b;
+    // Each player owns bounded queues; keep fixtures off Windows' 1 MiB stack.
+    auto a_storage = std::make_unique<Player>(), b_storage = std::make_unique<Player>();
+    auto& a = *a_storage; auto& b = *b_storage;
     std::vector<Player::Note> notes{{60,1,0.01,0.1,0.8f},{64,1,0.5,0.25,0.7f},{67,1,0.5,0.5,0.8f}};
     check(a.load_clip(notes, 4) && b.load_clip(notes, 4), "clip load");
     auto invalid = notes; invalid[0].velocity = std::numeric_limits<float>::quiet_NaN();
@@ -41,14 +44,14 @@ int main() {
     check(first_sound(x) == 240, "note onset at exact target sample");
     for (float value : x) check(std::isfinite(value) && std::abs(value) <= 1, "bounded samples");
 
-    Player tempo;
+    auto tempo_storage = std::make_unique<Player>(); auto& tempo = *tempo_storage;
     check(tempo.load_clip({{60,1,2.5,0.1,1}}, 8) && tempo.prepare(48000,1), "tempo setup");
     tempo.play(); std::vector<float> second(48000); render(tempo,second,128);
     check(first_sound(second) == -1 && std::abs(tempo.published_beat.load()-2) < 1e-8, "120 BPM beat progression");
     tempo.bpm.store(60); render(tempo,second,128);
     check(first_sound(second) == 24000 && std::abs(tempo.published_beat.load()-3) < 1e-8, "live BPM preserves beat position and reschedules future notes");
 
-    Player loop;
+    auto loop_storage = std::make_unique<Player>(); auto& loop = *loop_storage;
     check(loop.load_clip({{60,1,0.25,0.1,1}},2) && loop.prepare(48000,1), "loop setup");
     loop.play(); render(loop,x,1024);
     check(first_sound(x) == 6000 && std::abs(x[54000]) > 1e-9f, "loop events repeat on sample timeline");
@@ -56,7 +59,7 @@ int main() {
     loop.looping.store(false); loop.stop(); render(loop,second,256); loop.play(); render(loop,x,256);
     check(!loop.requested_play.load(), "one-shot clip stops at end");
 
-    Player rec;
+    auto rec_storage = std::make_unique<Player>(); auto& rec = *rec_storage;
     check(rec.load_clip({},4) && rec.prepare(48000,1), "record setup");
     rec.play(); rec.recording.store(true);
     check(rec.queue_input({1,1,60,0.75f}), "record note-on queue");
@@ -70,7 +73,7 @@ int main() {
     rec.device_stopped();
     check(rec.read_recorded(take) && take.note == 64 && take.length > 0, "stopping finalizes held recorded notes");
 
-    Player overflow;
+    auto overflow_storage = std::make_unique<Player>(); auto& overflow = *overflow_storage;
     check(overflow.prepare(48000,1), "overflow setup");
     for (int i=0;i<1023;++i) check(overflow.queue_input({1,1,60,1}), "fill input queue");
     check(!overflow.queue_input({2,1,60,0}), "queue overflow reported");
