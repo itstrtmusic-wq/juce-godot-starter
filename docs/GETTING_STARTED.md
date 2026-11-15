@@ -6,7 +6,7 @@ This addon exposes a supported set of JUCE features as Godot classes. You write 
 
 On Windows 11, download the **juce-godot-windows-x86_64** artifact from a successful [Windows addon build](https://github.com/itstrtmusic-wq/juce-godot-starter/actions/workflows/windows-build.yml) for the API-only edition, version 0.5 or later. Extract the download, then extract the ZIP inside it.
 
-Open the included `demo/project.godot` in standard Godot 4.7, x86_64. Press F5 to try the slider demo. Select an output and click **Start DSP network**. The oscillator source makes a test tone; the live-input source needs an instrument or microphone.
+Open the included `demo/project.godot` in standard Godot 4.7, x86_64. Open `res://main.tscn` and press F6 to try the slider demo. F5 opens the new DAW workspace. Select an output and click **Start DSP network**. The oscillator source makes a test tone; the live-input source needs an instrument or microphone.
 
 To use the API in your own project, close Godot, copy the package's `demo/addons/juce_bridge` folder into your project's `addons` folder and reopen Godot. The folder must include `juce_bridge.gdextension` and `bin/juce_bridge.dll`. A Git clone contains source code; it does not include the compiled DLL. No editor plugin needs enabling.
 
@@ -148,8 +148,12 @@ print(network.get_connections())
 print(JUCE.get_api_manifest())
 ```
 
-The API exposes 22 reference-counted classes and 209 methods, plus the legacy tone-demo class. It covers the supported buffers, MIDI, file operations and DSP processors; it does not expose every JUCE C++ function. GDScript controls native processors but is not called once per audio sample. New native processor implementations require extending/rebuilding the binding; new combinations of supported processors are entirely GDScript.
+The API exposes 23 reference-counted classes and 232 methods, plus the legacy tone-demo class. It covers the supported buffers, MIDI, file operations and DSP processors; it does not expose every JUCE C++ function. GDScript controls native processors but is not called once per audio sample. New native processor implementations require extending/rebuilding the binding; new combinations of supported processors are entirely GDScript.
 
 Next, read the [DSP network guide](DSP_NETWORKS.md) for all 26 processor types, [API reference](API_REFERENCE.md) for method signatures, and [offline_processing.gd](../demo/examples/offline_processing.gd) to generate a WAV without opening an audio device.
 
 For an on-screen instrument you can also play with computer keys, try the [MIDI keyboard example](MIDI_KEYBOARD.md). Its reusable Godot Control emits JUCE MIDI messages and its optional preview uses a native 16-voice synth assembled through this API.
+
+To record and edit those notes, try the [MIDI clip studio](MIDI_CLIPS.md), including a live BPM control and native note playback.
+
+The [DAW workspace](DAW_WORKSPACE.md) combines the controls into a modern pattern-based interface with a channel rack, arrangement and native mixer.

@@ -1,12 +1,12 @@
 config_version=5
 
 [application]
-config/name="JUCE GDScript API · DSP Networks"
-run/main_scene="res://main.tscn"
+config/name="JUCE Studio"
+run/main_scene="res://daw_studio.tscn"
 
 [display]
-window/size/viewport_width=800
-window/size/viewport_height=800
+window/size/viewport_width=1680
+window/size/viewport_height=980
 
 [rendering]
 renderer/rendering_method="gl_compatibility"

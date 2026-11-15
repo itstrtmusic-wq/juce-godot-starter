@@ -8,7 +8,7 @@ This example uses Godot for the piano interface and typing input. The reusable c
 
 1. Download the compiled Windows package from the successful build linked in the keyboard pull request. Extract the artifact and the ZIP inside it. A Git clone contains scripts/source but does not contain `juce_bridge.dll`; use the compiled package's addon if you are working from a clone.
 2. Import `demo/project.godot` in Godot 4.7.
-3. Open `res://examples/typing_keyboard.tscn` and press **F6** (Run Current Scene). The project's F5 main scene remains the original API slider demo.
+3. Open `res://examples/typing_keyboard.tscn` and press **F6** (Run Current Scene). F5 opens the new DAW workspace; the original API slider demo remains in `main.tscn`.
 4. Choose your output device and click **Start preview**. Click the piano, or play the mapped typing keys. No microphone input is opened.
 
 The controller does not need an editor plugin. The JUCE Graph visual DSP editor remains removed.

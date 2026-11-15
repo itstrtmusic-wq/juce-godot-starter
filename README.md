@@ -1,9 +1,11 @@
 # JUCE for GDScript — API + DSP networks
 
-Version **0.5.0** exposes **22 reference-counted classes and 209 methods**, plus the legacy tone-demo class. Build your own audio tools in GDScript using JUCE buffers, MIDI, files, envelopes, filters, reverb, chorus, phaser, dynamics and editable native DSP networks with modulation and patch persistence.
+Version **0.7.0** exposes **23 reference-counted classes and 232 methods**, plus the legacy tone-demo class. Build your own audio tools in GDScript using JUCE buffers, MIDI, files, envelopes, filters, reverb, chorus, phaser, dynamics and editable native DSP networks with modulation and patch persistence.
 
 This is a growing, explicitly documented JUCE binding layer. It is **not the entire JUCE C++ API**. GUI/window classes, AudioProcessor/AudioProcessorGraph, third-party plugin hosting, arbitrary C++ templates and GDScript callbacks on real-time audio threads are not bound. The custom `JuceDSPNetwork` is a graph of native JUCE processors; it does not claim to wrap JUCE's AudioProcessorGraph.
 
+- [Modern DAW workspace: channel rack, playlist, piano roll and mixer](docs/DAW_WORKSPACE.md) — run the demo with F5.
+- [MIDI recorder, piano roll and live BPM](docs/MIDI_CLIPS.md) — open `demo/examples/clip_recorder.tscn` and press F6.
 - [Start here: using the API in Godot](docs/GETTING_STARTED.md)
 - [On-screen MIDI piano and FL-style typing keys](docs/MIDI_KEYBOARD.md) — open `demo/examples/typing_keyboard.tscn` and press F6.
 - [All supported classes and methods](docs/API_REFERENCE.md)
@@ -11,9 +13,17 @@ This is a growing, explicitly documented JUCE binding layer. It is **not the ent
 - [Binding manifest](bindings/api.json), also available at runtime through `JUCE.get_api_manifest()`
 - [Executable GDScript examples](demo/examples)
 
+## DAW workspace in 0.7
+
+The main scene is now a modern dark, FL-style DAW workspace with pattern/song modes, a 16-step channel rack, arrangement editing, piano-roll recording, a native channel mixer and eight master-effect slots. It includes procedural percussion, synth generators, native meters, project JSON save/load and MIDI export. Panels can be moved, resized and restored. Read the [workspace guide](docs/DAW_WORKSPACE.md) for the supported workflow and limits.
+
+## MIDI clip transport in 0.6
+
+`JuceMidiSequencer` adds sample-timed playback of a beat-based clip, live BPM changes, looping, a metronome, a 32-voice audition instrument and bounded MIDI recording queues. The optional Godot clip studio records typing/mouse notes and supports piano-roll editing, quantization, JSON clips and standard MIDI export. The native API can also render clips offline.
+
 ## API-only edition
 
-The visual graph editor, editor plugin and graph-document format have been removed. DSP networks, modulation and native JSON patches remain available through GDScript. The original slider demo is the main scene again.
+The visual graph editor, editor plugin and graph-document format have been removed. DSP networks, modulation and native JSON patches remain available through GDScript. The original slider demo remains at `demo/main.tscn`; the workspace uses the same native API.
 
 ## Modulation, processors and patches
 
@@ -99,7 +109,7 @@ Standalone processor wrappers run synchronously/offline. The DSP network owns se
 1. Open [Actions → Windows addon build](https://github.com/itstrtmusic-wq/juce-godot-starter/actions/workflows/windows-build.yml).
 2. Choose the latest successful run, then download the **juce-godot-windows-x86_64** artifact. You may need to sign in.
 3. Extract the artifact and the packaged ZIP inside it. Import **demo/project.godot**.
-4. Run the demo. It assembles an oscillator/input → filter → distortion → reverb → gain → clip network entirely from GDScript. Sliders control native processor parameters.
+4. Press F5 to open the DAW workspace and play the included project. Open `demo/main.tscn` and press F6 for the original API slider demo.
 5. For another project, copy **demo/addons/juce_bridge** into that project's `addons` folder, then reopen the editor. No EditorPlugin needs enabling.
 
 The build includes the DLL, so no C++ tools are needed to use it. Close Godot before replacing/rebuilding the DLL; native hot reload is disabled. Live microphone monitoring should use headphones to avoid acoustic feedback.
