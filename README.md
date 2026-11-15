@@ -1,15 +1,20 @@
 # JUCE for GDScript — API + DSP networks
 
-Version **0.5.0** exposes **22 reference-counted classes and 209 methods**, plus the legacy tone-demo class. Build your own audio tools in GDScript using JUCE buffers, MIDI, files, envelopes, filters, reverb, chorus, phaser, dynamics and editable native DSP networks with modulation and patch persistence.
+Version **0.6.0** exposes **23 reference-counted classes and 228 methods**, plus the legacy tone-demo class. Build your own audio tools in GDScript using JUCE buffers, MIDI, files, envelopes, filters, reverb, chorus, phaser, dynamics and editable native DSP networks with modulation and patch persistence.
 
 This is a growing, explicitly documented JUCE binding layer. It is **not the entire JUCE C++ API**. GUI/window classes, AudioProcessor/AudioProcessorGraph, third-party plugin hosting, arbitrary C++ templates and GDScript callbacks on real-time audio threads are not bound. The custom `JuceDSPNetwork` is a graph of native JUCE processors; it does not claim to wrap JUCE's AudioProcessorGraph.
 
+- [MIDI recorder, piano roll and live BPM](docs/MIDI_CLIPS.md) — open `demo/examples/clip_recorder.tscn` and press F6.
 - [Start here: using the API in Godot](docs/GETTING_STARTED.md)
 - [On-screen MIDI piano and FL-style typing keys](docs/MIDI_KEYBOARD.md) — open `demo/examples/typing_keyboard.tscn` and press F6.
 - [All supported classes and methods](docs/API_REFERENCE.md)
 - [DSP networks: nodes, parameters, routing and live audio](docs/DSP_NETWORKS.md)
 - [Binding manifest](bindings/api.json), also available at runtime through `JUCE.get_api_manifest()`
 - [Executable GDScript examples](demo/examples)
+
+## MIDI clip transport in 0.6
+
+`JuceMidiSequencer` adds sample-timed playback of a beat-based clip, live BPM changes, looping, a metronome, a 32-voice audition instrument and bounded MIDI recording queues. The optional Godot clip studio records typing/mouse notes and supports piano-roll editing, quantization, JSON clips and standard MIDI export. The native API can also render clips offline.
 
 ## API-only edition
 

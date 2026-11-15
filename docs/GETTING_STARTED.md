@@ -148,8 +148,10 @@ print(network.get_connections())
 print(JUCE.get_api_manifest())
 ```
 
-The API exposes 22 reference-counted classes and 209 methods, plus the legacy tone-demo class. It covers the supported buffers, MIDI, file operations and DSP processors; it does not expose every JUCE C++ function. GDScript controls native processors but is not called once per audio sample. New native processor implementations require extending/rebuilding the binding; new combinations of supported processors are entirely GDScript.
+The API exposes 23 reference-counted classes and 228 methods, plus the legacy tone-demo class. It covers the supported buffers, MIDI, file operations and DSP processors; it does not expose every JUCE C++ function. GDScript controls native processors but is not called once per audio sample. New native processor implementations require extending/rebuilding the binding; new combinations of supported processors are entirely GDScript.
 
 Next, read the [DSP network guide](DSP_NETWORKS.md) for all 26 processor types, [API reference](API_REFERENCE.md) for method signatures, and [offline_processing.gd](../demo/examples/offline_processing.gd) to generate a WAV without opening an audio device.
 
 For an on-screen instrument you can also play with computer keys, try the [MIDI keyboard example](MIDI_KEYBOARD.md). Its reusable Godot Control emits JUCE MIDI messages and its optional preview uses a native 16-voice synth assembled through this API.
+
+To record and edit those notes, try the [MIDI clip studio](MIDI_CLIPS.md), including a live BPM control and native note playback.
