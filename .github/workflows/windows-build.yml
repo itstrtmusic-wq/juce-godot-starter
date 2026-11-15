@@ -29,7 +29,7 @@ jobs:
             Invoke-WebRequest -Uri $url -OutFile "$env:RUNNER_TEMP/godot-$version.zip"
             Expand-Archive -Path "$env:RUNNER_TEMP/godot-$version.zip" -DestinationPath "$env:RUNNER_TEMP/godot-$version"
           }
-      - name: Verify API, visual editor and user interactions in Godot 4.5.1 and 4.7
+      - name: Verify GDScript API and examples in Godot 4.5.1 and 4.7
         shell: pwsh
         run: |
           foreach ($version in @('4.5.1', '4.7')) {

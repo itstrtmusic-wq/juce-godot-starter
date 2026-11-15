@@ -47,6 +47,4 @@ Loading is transactional: every node, parameter, audio edge and modulation edge 
 
 `save_patch()` accepts `res://`, `user://` and filesystem paths and writes through a temporary file. Existing targets require `overwrite=true`; directories are not valid targets. File loading is capped at 1 MiB. Error details are available through `get_last_error()`. An effect-specific schema version is separate from the API release version (currently 0.3).
 
-The [visual graph editor](GRAPH_EDITOR.md) wraps this native patch with layout/view metadata in a `.jucegraph` document. Its Export DSP action writes this unwrapped native schema.
-
 For a complete executable save/load/render example, see [preset_render.gd](../demo/examples/preset_render.gd).

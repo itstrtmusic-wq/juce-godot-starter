@@ -48,7 +48,7 @@ Every added processor has `bypass` from 0 to 1, default 0. Values >= 0.5 pass th
 
 Filter/oscillator frequency is further clamped below the actual device Nyquist frequency. Oscillator saw/square/triangle functions are simple waveforms without band-limiting or oversampling. Distortion and nonlinear math nodes have no oversampling. Fast filter/delay/waveform parameter changes may produce discontinuities; only gain and oscillator-frequency changes have built-in smoothing. There is no implicit output limiter; design your gain staging or add a clip or limiter node.
 
-`get_supported_node_types()` returns all 26 supported type strings. `get_nodes()` returns each node's ID, type, and parameter value/min/max metadata; `get_connections()` returns source, destination and gain dictionaries. These let you build your own Godot GraphEdit UI or save a patch description in GDScript. Network patches can be saved and loaded, and the addon now includes a [visual graph editor](GRAPH_EDITOR.md) for these operations. See [patch format](PATCH_FORMAT.md).
+`get_supported_node_types()` returns all 26 supported type strings. `get_nodes()` returns each node's ID, type, and parameter value/min/max metadata; `get_connections()` returns source, destination and gain dictionaries. Use these to inspect networks from code. Network patches can be saved and loaded. See [patch format](PATCH_FORMAT.md).
 
 ## Parameter modulation
 
