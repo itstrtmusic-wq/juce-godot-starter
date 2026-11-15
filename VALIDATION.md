@@ -10,6 +10,8 @@ GDScript integration checks every declared class/method, buffer ownership, inval
 
 The new `first_sound.gd` example is additionally built and rendered offline on Godot 4.7, checking for nonzero audio and a successful cutoff update. This checks DSP output without claiming a physical audio-device test.
 
+The optional piano example has viewport-input checks for physical typing, chords, repeat suppression, overlapping note assignments, modifier shortcuts, text focus, transpose, sustain, black-key hit testing, mouse glissando, release outside the control, and note cleanup on focus loss/hiding/disable. Its preview synth is rendered offline to check a three-note chord, finite bounded samples, sustain/release, panic silence and voice exhaustion. The demo scene is loaded and closed without starting hardware audio. The actual interface is rendered and inspected in Godot 4.7 with Linux software OpenGL; the screenshot in the guide shows that rendered scene.
+
 The integration runner also checks a fresh empty project and a fresh extension-only project. Editor checks allow bounded startup iterations before exit to avoid Godot's documented first-import documentation race ([Godot #111048](https://github.com/godotengine/godot/issues/111048)); the API and DSP tests remain enabled.
 
 The Windows workflow builds with MSVC on windows-2022, runs native tests, downloads Godot 4.5.1 and 4.7 and runs GDScript integration tests on both before uploading its artifact. **Only a successful workflow run for the commit being downloaded establishes those Windows checks have passed.**

@@ -5,6 +5,7 @@ Version **0.5.0** exposes **22 reference-counted classes and 209 methods**, plus
 This is a growing, explicitly documented JUCE binding layer. It is **not the entire JUCE C++ API**. GUI/window classes, AudioProcessor/AudioProcessorGraph, third-party plugin hosting, arbitrary C++ templates and GDScript callbacks on real-time audio threads are not bound. The custom `JuceDSPNetwork` is a graph of native JUCE processors; it does not claim to wrap JUCE's AudioProcessorGraph.
 
 - [Start here: using the API in Godot](docs/GETTING_STARTED.md)
+- [On-screen MIDI piano and FL-style typing keys](docs/MIDI_KEYBOARD.md) — open `demo/examples/typing_keyboard.tscn` and press F6.
 - [All supported classes and methods](docs/API_REFERENCE.md)
 - [DSP networks: nodes, parameters, routing and live audio](docs/DSP_NETWORKS.md)
 - [Binding manifest](bindings/api.json), also available at runtime through `JUCE.get_api_manifest()`
