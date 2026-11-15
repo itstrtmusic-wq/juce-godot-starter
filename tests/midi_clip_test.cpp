@@ -89,8 +89,8 @@ int main() {
     check(first_sound(block) >= 0, "native metronome click");
     overflow.stop(); render(overflow,block,128); check(first_sound(block) == -1, "stop silences metronome and voices");
     auto mixer_storage = std::make_unique<Player>(); auto& mixed = *mixer_storage;
-    check(mixed.prepare(48000,2), "stereo mixer prepare");
     mixed.channel_settings[0].pan.store(-1);
+    check(mixed.prepare(48000,2), "stereo mixer prepare");
     check(mixed.queue_input({1,1,60,1}), "pan source");
     float l[512] = {}, r[512] = {}; float* stereo[] = {l,r};
     check(mixed.render(stereo,2,512), "stereo render");
@@ -99,6 +99,8 @@ int main() {
     check(left_sound && mixed.channel_settings[0].peak.load()>0, "channel peak metering");
     mixed.channel_settings[0].mute.store(true);
     check(mixed.render(stereo,2,512), "mute render");
+    bool ramp_sound = false; for(int i=0;i<100;++i)ramp_sound |= std::abs(l[i])>0.000001f;
+    check(ramp_sound, "mute ramps down rather than cutting a sustained signal instantly");
     for(int i=256;i<512;++i)check(l[i]==0&&r[i]==0,"muted channel is silent after its 5 ms ramp");
     mixed.channel_settings[0].mute.store(false);
     mixed.channel_settings[1].solo.store(true);

@@ -244,8 +244,8 @@ bool MidiClipPlayer::render(float* const* output, int count, int samples) noexce
         }
         float left, right;
         for (int ch = 0; ch < 16; ++ch) {
-            gains[ch] = gain_ramps[size_t(ch)].getNextSample();
-            pans[ch] = pan_ramps[size_t(ch)].getNextSample();
+            gains[ch] = gain_ramps[size_t(ch)].getNextValue();
+            pans[ch] = pan_ramps[size_t(ch)].getNextValue();
         }
         synth_sample(shape, gains, pans, peaks, left, right);
         if (click_enabled && click_left > 0) {
@@ -253,7 +253,7 @@ bool MidiClipPlayer::render(float* const* output, int count, int samples) noexce
             left += click; right += click;
             click_phase += juce::MathConstants<double>::twoPi * click_frequency / rate; --click_left;
         }
-        const float gain = master_ramp.getNextSample();
+        const float gain = master_ramp.getNextValue();
         if (count == 1) { if (output[0]) output[0][sample] = std::clamp((left + right) * 0.5f * gain, -1.0f, 1.0f); }
         else {
             if (output[0]) output[0][sample] = std::clamp(left * gain, -1.0f, 1.0f);
