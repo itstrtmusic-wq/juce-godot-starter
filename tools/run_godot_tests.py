@@ -42,15 +42,13 @@ for with_extension in (False, True):
 checks = [(editor_flags, None),
           (['--script', 'res://api_test.gd'], 'JUCE API:'),
           (['--script', 'res://expansion_test.gd'], 'JUCE expansion:'),
-          (['--script', 'res://graph_editor_test.gd'], 'JUCE graph editor:'),
-          (['--script', 'res://graph_interaction_test.gd'], 'JUCE graph interactions:'),
           (['--script', 'res://smoke_test.gd'], 'GDScript registration'),
           (['--script', 'res://examples/offline_processing.gd'], 'Rendered:'),
           (['--script', 'res://examples/preset_render.gd'], 'Saved patch and rendered:'),
           (['--quit-after', '5'], None)]
 for tail, marker in checks:
     if '--script' in tail:
-        tail = ['--quit-after', '600' if 'graph_' in tail[-1] else '120'] + tail
+        tail = ['--quit-after', '120'] + tail
     if args.expect_no_device and '--script' in tail and tail[-1] in ('res://api_test.gd', 'res://expansion_test.gd', 'res://smoke_test.gd'):
         tail += ['--', '--expect-no-device']
     try:

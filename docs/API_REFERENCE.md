@@ -1,6 +1,6 @@
 # GDScript binding reference
 
-API version: **0.4.0**. 22 classes and 209 methods are declared below.
+API version: **0.5.0**. 22 classes and 209 methods are declared below.
 
 Generated from `bindings/api.json`. These are explicit supported bindings, not a complete JUCE wrapper. Use `JUCE.get_api_manifest()` to inspect this surface at runtime.
 
