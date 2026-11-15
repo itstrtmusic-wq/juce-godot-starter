@@ -1,6 +1,6 @@
 # GDScript binding reference
 
-API version: **0.5.0**. 22 classes and 209 methods are declared below.
+API version: **0.6.0**. 23 classes and 228 methods are declared below.
 
 Generated from `bindings/api.json`. These are explicit supported bindings, not a complete JUCE wrapper. Use `JUCE.get_api_manifest()` to inspect this surface at runtime.
 
@@ -319,7 +319,7 @@ JUCE implementation: `Native graph of JUCE DSP processors`.
 
 ## JuceAudioDeviceManager
 
-Executes a JuceDSPNetwork using native audio callbacks, with optional live audio input.
+JUCE audio-device I/O for either a DSP network or a MIDI sequencer. Stop before switching sources.
 
 JUCE implementation: `juce::AudioDeviceManager`.
 
@@ -334,6 +334,7 @@ JUCE implementation: `juce::AudioDeviceManager`.
 | `get_peak()` | `—` |
 | `get_device_info()` | `—` |
 | `get_last_error()` | `—` |
+| `set_sequencer(sequencer)` | `—` |
 
 ## JuceChorus
 
@@ -449,3 +450,30 @@ JUCE implementation: `juce::dsp::NoiseGate<float>`.
 | `ratio` | 10 | 1 | 100 |
 | `attack_ms` | 5 | 0.01 | 1000 |
 | `release_ms` | 100 | 0.01 | 5000 |
+
+## JuceMidiSequencer
+
+One beat-based MIDI clip, native 32-voice audition synth, sample-timed playback, live BPM, metronome and bounded MIDI recording queues. Attach to an audio device or render offline. Stop the device before replacing a clip.
+
+JUCE implementation: `Native sample-timed clip transport with JUCE ADSR and MIDI values`.
+
+| Method | Defaults for trailing arguments |
+| --- | --- |
+| `load_clip(notes, length_beats)` | `double(16.0)` |
+| `export_clip()` | `—` |
+| `set_bpm(bpm)` | `—` |
+| `get_bpm()` | `—` |
+| `set_looping(enabled)` | `—` |
+| `set_metronome(enabled)` | `—` |
+| `set_recording(enabled)` | `—` |
+| `set_volume_db(db)` | `—` |
+| `set_waveform(waveform)` | `—` |
+| `play()` | `—` |
+| `stop()` | `—` |
+| `panic()` | `—` |
+| `queue_midi(message)` | `—` |
+| `read_recorded_notes()` | `—` |
+| `get_transport()` | `—` |
+| `prepare(sample_rate, channels)` | `int(2)` |
+| `process(buffer)` | `—` |
+| `get_last_error()` | `—` |
