@@ -62,6 +62,37 @@ bool JuceMidiSequencer::queue_midi(const Ref<JuceMidiMessage>& message) {
     if (!engine.queue_input(input)) { error = "MIDI input queue is full or message is invalid; panic scheduled"; return false; }
     error = ""; return true;
 }
+bool JuceMidiSequencer::set_channel_settings(int channel, const Dictionary& settings) {
+    if (channel < 1 || channel > 16) { error = "Channel must be 1-16"; return false; }
+    for (const Variant& raw : settings.keys()) {
+        if (raw.get_type() != Variant::STRING) { error = "Channel setting keys must be strings"; return false; }
+        const String key = raw;
+        const Variant value = settings[raw];
+        const bool valid = (key == "volume_db" && number(value) && double(value) >= -60 && double(value) <= 6)
+            || (key == "pan" && number(value) && double(value) >= -1 && double(value) <= 1)
+            || (key == "waveform" && integer(value) && double(value) >= -1 && double(value) <= 7)
+            || ((key == "mute" || key == "solo") && value.get_type() == Variant::BOOL);
+        if (!valid) { error = "Invalid channel setting or range"; return false; }
+    }
+    auto& ch = engine.channel_settings[size_t(channel - 1)];
+    if (settings.has("volume_db")) ch.volume_db.store(float(double(settings["volume_db"])));
+    if (settings.has("pan")) ch.pan.store(float(double(settings["pan"])));
+    if (settings.has("waveform")) ch.waveform.store(int(settings["waveform"]));
+    if (settings.has("mute")) ch.mute.store(bool(settings["mute"]));
+    if (settings.has("solo")) ch.solo.store(bool(settings["solo"]));
+    error = ""; return true;
+}
+Dictionary JuceMidiSequencer::get_channel_settings(int channel) const {
+    Dictionary d; if (channel < 1 || channel > 16) return d;
+    const auto& ch = engine.channel_settings[size_t(channel - 1)];
+    d["volume_db"] = ch.volume_db.load(); d["pan"] = ch.pan.load(); d["waveform"] = ch.waveform.load();
+    d["mute"] = ch.mute.load(); d["solo"] = ch.solo.load(); return d;
+}
+PackedFloat32Array JuceMidiSequencer::get_channel_peaks() const {
+    PackedFloat32Array result; result.resize(16);
+    for (int ch = 0; ch < 16; ++ch) result.set(ch, engine.channel_settings[size_t(ch)].peak.load());
+    return result;
+}
 Array JuceMidiSequencer::read_recorded_notes() {
     Array result; bridge::MidiClipPlayer::Recorded n;
     while (engine.read_recorded(n)) result.append(note_dict(n.note, n.channel, n.start, n.length, n.velocity));

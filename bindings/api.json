@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0",
+  "version": "0.7.0",
   "complete_juce_wrapper": false,
   "classes": [
     {
@@ -1450,6 +1450,14 @@
           ],
           "defaults": [],
           "static": false
+        },
+        {
+          "name": "set_post_network",
+          "args": [
+            "network"
+          ],
+          "defaults": [],
+          "static": false
         }
       ]
     },
@@ -2073,6 +2081,29 @@
         },
         {
           "name": "get_last_error",
+          "args": [],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "set_channel_settings",
+          "args": [
+            "channel",
+            "settings"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_channel_settings",
+          "args": [
+            "channel"
+          ],
+          "defaults": [],
+          "static": false
+        },
+        {
+          "name": "get_channel_peaks",
           "args": [],
           "defaults": [],
           "static": false

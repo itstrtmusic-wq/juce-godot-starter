@@ -88,5 +88,30 @@ int main() {
     overflow.metronome.store(true); overflow.play(); render(overflow,block,128);
     check(first_sound(block) >= 0, "native metronome click");
     overflow.stop(); render(overflow,block,128); check(first_sound(block) == -1, "stop silences metronome and voices");
+    auto mixer_storage = std::make_unique<Player>(); auto& mixed = *mixer_storage;
+    check(mixed.prepare(48000,2), "stereo mixer prepare");
+    mixed.channel_settings[0].pan.store(-1);
+    check(mixed.queue_input({1,1,60,1}), "pan source");
+    float l[512] = {}, r[512] = {}; float* stereo[] = {l,r};
+    check(mixed.render(stereo,2,512), "stereo render");
+    bool left_sound = false;
+    for(int i=0;i<512;++i){left_sound |= std::abs(l[i])>0.00001f;check(r[i]==0,"hard-left balance silences right");}
+    check(left_sound && mixed.channel_settings[0].peak.load()>0, "channel peak metering");
+    mixed.channel_settings[0].mute.store(true);
+    check(mixed.render(stereo,2,512), "mute render");
+    for(int i=256;i<512;++i)check(l[i]==0&&r[i]==0,"muted channel is silent after its 5 ms ramp");
+    mixed.channel_settings[0].mute.store(false);
+    mixed.channel_settings[1].solo.store(true);
+    check(mixed.queue_input({1,2,64,0.8f})&&mixed.render(stereo,2,512),"solo render");
+    check(mixed.channel_settings[0].peak.load()==0&&mixed.channel_settings[1].peak.load()>0,"solo excludes other channels");
+    for(int kind=4;kind<=7;++kind){
+        auto drum=std::make_unique<Player>();
+        drum->channel_settings[0].waveform.store(kind);
+        check(drum->prepare(48000,1)&&drum->queue_input({1,1,36,1}),"drum prepare");
+        allocations=0;audit=true;render(*drum,second,128);audit=false;
+        check(allocations==0&&first_sound(second)>=0,"allocation-free percussion produces sound");
+        for(float value:second)check(std::isfinite(value)&&std::abs(value)<=1,"percussion bounded");
+        check(std::abs(second.back())<1e-8f,"percussion terminates without requiring a note-off");
+    }
     std::cout << "MIDI clip: exact sample onset, block invariance, live tempo, looping, recording, sustain, overflow and allocation checks passed\n";
 }

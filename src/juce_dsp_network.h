@@ -37,6 +37,8 @@ class JuceAudioDeviceManager : public RefCounted, private juce::AudioIODeviceCal
     juce::AudioDeviceManager devices;
     Ref<JuceDSPNetwork> network;
     Ref<JuceMidiSequencer> sequencer;
+    Ref<JuceDSPNetwork> post_network;
+    bool owns_post = false;
     std::atomic<bool> running{false};
     std::atomic<float> peak{0.0f};
     bool owns_graph = false;
@@ -53,6 +55,7 @@ public:
     PackedStringArray get_input_devices() { return device_names(true); }
     bool set_network(const Ref<JuceDSPNetwork>& value);
     bool set_sequencer(const Ref<JuceMidiSequencer>& value);
+    bool set_post_network(const Ref<JuceDSPNetwork>& value);
     bool start_audio(const String& output_device = "", double sample_rate = 48000.0, int buffer_size = 256, const String& input_device = "", bool enable_input = false);
     void stop_audio();
     bool is_running() const { return running.load(); }

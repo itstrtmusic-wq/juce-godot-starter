@@ -19,6 +19,9 @@ public:
     void set_recording(bool enabled) { engine.recording.store(enabled); }
     bool set_volume_db(float value);
     bool set_waveform(int value);
+    bool set_channel_settings(int channel, const Dictionary& settings);
+    Dictionary get_channel_settings(int channel) const;
+    PackedFloat32Array get_channel_peaks() const;
     bool play() { if (!engine.is_prepared()) { error = "Start the audio device or prepare offline before Play"; return false; } engine.play(); error = ""; return true; }
     void stop() { engine.stop(); }
     void panic() { engine.panic(); }

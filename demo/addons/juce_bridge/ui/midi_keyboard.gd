@@ -48,6 +48,8 @@ const DISPLAY_NOTES := 36
         if is_node_ready():
             all_notes_off()
         typing_enabled = value
+@export var capture_when_hidden := false
+@export var space_sustain := true
 
 var _mapping := DEFAULT_MAPPING.duplicate()
 var _sources: Dictionary = {} # Source token -> original note (independent of transpose).
@@ -178,7 +180,7 @@ func _input(event: InputEvent) -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
     if not event is InputEventKey or not event.pressed or event.echo:
         return
-    if not typing_enabled or not is_visible_in_tree():
+    if not typing_enabled or (not is_visible_in_tree() and not capture_when_hidden):
         return
     if event.ctrl_pressed or event.alt_pressed or event.meta_pressed:
         return
@@ -192,7 +194,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
         base_note -= 12
     elif key == KEY_BRACKETRIGHT:
         base_note += 12
-    elif key == KEY_SPACE:
+    elif key == KEY_SPACE and space_sustain:
         _space_down = true
         set_sustain(true)
     elif _mapping.has(key):

@@ -15,15 +15,22 @@ bool JuceDSPNetwork::prepare(double rate,int size,int channels){if(graph.active.
 PackedStringArray JuceAudioDeviceManager::device_names(bool input){PackedStringArray r;const auto& types=devices.getAvailableDeviceTypes();if(!types.isEmpty()){auto* type=types.getFirst();type->scanForDevices();for(auto& name:type->getDeviceNames(input))r.append(gd_string(name));}return r;}
 bool JuceAudioDeviceManager::set_network(const Ref<JuceDSPNetwork>& value){error="";if(owns_graph||running.load()){error="Stop audio before replacing the network";return false;}sequencer.unref();network=value;return true;}
 bool JuceAudioDeviceManager::set_sequencer(const Ref<JuceMidiSequencer>& value){error="";if(owns_graph||running.load()){error="Stop audio before replacing the sequencer";return false;}network.unref();sequencer=value;return true;}
+bool JuceAudioDeviceManager::set_post_network(const Ref<JuceDSPNetwork>& value){error="";if(owns_graph||running.load()){error="Stop audio before replacing master effects";return false;}post_network=value;return true;}
 bool JuceAudioDeviceManager::start_audio(const String& output,double rate,int size,const String& input,bool enable_input){
     stop_audio();error="";
     if(network.is_null()&&sequencer.is_null()){error="Set a DSP network or MIDI sequencer before starting audio";return false;}
     if(sequencer.is_valid()&&enable_input){error="MIDI sequencer output does not accept live audio input";return false;}
+    if(post_network.is_valid()&&sequencer.is_null()){error="Master post network requires a sequencer source";return false;}
     if(!valid_rate(rate)||size<16||size>8192){error="Invalid sample rate or buffer size";return false;}
     bool expected=false;
     auto& active=sequencer.is_valid()?sequencer->engine.active:network->graph.active;
     if(!active.compare_exchange_strong(expected,true)){error="Audio source already belongs to another running device manager";return false;}
     owns_graph=true;
+    if(post_network.is_valid()){
+        expected=false;
+        if(!post_network->graph.active.compare_exchange_strong(expected,true)){error="Master effects belong to another running device";stop_audio();return false;}
+        owns_post=true;
+    }
     juce::AudioDeviceManager::AudioDeviceSetup setup;setup.outputDeviceName=juce::String::fromUTF8(output.utf8().get_data());setup.inputDeviceName=juce::String::fromUTF8(input.utf8().get_data());setup.sampleRate=rate;setup.bufferSize=size;setup.useDefaultInputChannels=enable_input;setup.useDefaultOutputChannels=true;
     auto failure=devices.initialise(enable_input?2:0,2,nullptr,false,{},&setup);
     if(failure.isNotEmpty())error=gd_string(failure);
@@ -33,13 +40,19 @@ bool JuceAudioDeviceManager::start_audio(const String& output,double rate,int si
     if(!running.load()){error="Cannot prepare DSP network for the device; check graph limits";stop_audio();return false;}
     return true;
 }
-void JuceAudioDeviceManager::stop_audio(){devices.removeAudioCallback(this);devices.closeAudioDevice();running.store(false);peak.store(0);if(owns_graph){if(network.is_valid())network->graph.active.store(false);if(sequencer.is_valid()){sequencer->engine.device_stopped();sequencer->engine.active.store(false);}owns_graph=false;}}
+void JuceAudioDeviceManager::stop_audio(){devices.removeAudioCallback(this);devices.closeAudioDevice();running.store(false);peak.store(0);if(owns_post&&post_network.is_valid()){post_network->graph.active.store(false);owns_post=false;}if(owns_graph){if(network.is_valid())network->graph.active.store(false);if(sequencer.is_valid()){sequencer->engine.device_stopped();sequencer->engine.active.store(false);}owns_graph=false;}}
 void JuceAudioDeviceManager::audioDeviceAboutToStart(juce::AudioIODevice* device){
     channels=device->getActiveOutputChannels().countNumberOfSetBits();
-    running.store(sequencer.is_valid()?sequencer->engine.prepare(device->getCurrentSampleRate(),channels,true):network.is_valid()&&network->graph.prepare(device->getCurrentSampleRate(),device->getCurrentBufferSizeSamples(),channels,false));
+    bool ready=sequencer.is_valid()?sequencer->engine.prepare(device->getCurrentSampleRate(),channels,true):network.is_valid()&&network->graph.prepare(device->getCurrentSampleRate(),device->getCurrentBufferSizeSamples(),channels,false);
+    if(ready&&post_network.is_valid())ready=post_network->graph.prepare(device->getCurrentSampleRate(),device->getCurrentBufferSizeSamples(),channels,false);
+    running.store(ready);
 }
 void JuceAudioDeviceManager::audioDeviceIOCallbackWithContext(const float* const* input,int inputs,float* const* output,int outputs,int samples,const juce::AudioIODeviceCallbackContext&){
     if(!running.load()||!(sequencer.is_valid()?sequencer->engine.render(output,outputs,samples):network->graph.render(input,inputs,output,outputs,samples))){for(int ch=0;ch<outputs;++ch)if(output[ch])juce::FloatVectorOperations::clear(output[ch],samples);peak.store(0);return;}
+    if(post_network.is_valid()){
+        const float* source[2]={outputs>0?output[0]:nullptr,outputs>1?output[1]:nullptr};
+        if(!post_network->graph.render(source,std::min(outputs,2),output,outputs,samples)){for(int ch=0;ch<outputs;++ch)if(output[ch])juce::FloatVectorOperations::clear(output[ch],samples);peak.store(0);return;}
+    }
     float value=0;for(int ch=0;ch<outputs;++ch)if(output[ch])for(int i=0;i<samples;++i){if(!std::isfinite(output[ch][i]))output[ch][i]=0;value=std::max(value,std::abs(output[ch][i]));}peak.store(value);
 }
 Dictionary JuceAudioDeviceManager::get_device_info(){Dictionary r;if(auto* d=devices.getCurrentAudioDevice()){r["name"]=gd_string(d->getName());r["sample_rate"]=d->getCurrentSampleRate();r["buffer_size"]=d->getCurrentBufferSizeSamples();r["input_channels"]=d->getActiveInputChannels().countNumberOfSetBits();r["output_channels"]=d->getActiveOutputChannels().countNumberOfSetBits();r["output_latency_samples"]=d->getOutputLatencyInSamples();}return r;}

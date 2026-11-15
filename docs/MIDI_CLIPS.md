@@ -8,7 +8,7 @@ The clip studio is a Godot example backed by `JuceMidiSequencer`. Native code sc
 
 Use the compiled Windows package for API **0.6.0** or later. A Git clone does not contain the DLL. Close Godot before replacing an older addon, then import `demo/project.godot` in Godot 4.7.
 
-Open `res://examples/clip_recorder.tscn` and press **F6**. The example opens at 1280 × 900. F5 still runs the original slider demo. The visual DSP graph editor remains removed.
+Open `res://examples/clip_recorder.tscn` and press **F6**. The example opens at 1280 × 900. F5 opens the new DAW workspace; the original slider demo remains in `main.tscn`. The visual DSP graph editor remains removed.
 
 ## Playback and BPM
 

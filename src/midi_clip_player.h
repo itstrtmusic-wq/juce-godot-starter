@@ -36,6 +36,12 @@ public:
     std::atomic<bool> published_playing{false};
     std::atomic<float> volume_db{-9.0f};
     std::atomic<int> waveform{1};
+    struct Channel {
+        std::atomic<float> volume_db{0}, pan{0}, peak{0};
+        std::atomic<bool> mute{false}, solo{false};
+        std::atomic<int> waveform{-1}; // -1 follows the global waveform; 4–7 are drums.
+    };
+    std::array<Channel, 16> channel_settings;
     std::atomic<uint64_t> input_drops{0}, recording_drops{0}, rendered_samples{0};
 private:
     struct Event { double beat; int id; bool on; };
@@ -46,11 +52,17 @@ private:
         double phase = 0, step = 0;
         float velocity = 0;
         uint64_t age = 0;
+        int kind = -1;
+        uint64_t life = 0;
+        uint32_t noise = 1;
+        float previous_noise = 0;
     };
     struct Held { double start = -1; float velocity = 0; };
     std::array<Voice, voice_count> voices;
     std::array<Held, 16 * 128> held_recording;
     std::array<bool, 16> pedal{};
+    std::array<juce::SmoothedValue<float>, 16> gain_ramps, pan_ramps;
+    juce::SmoothedValue<float> master_ramp;
     MidiQueue<Input, 1024> incoming;
     MidiQueue<Recorded, 4097> completed;
     std::vector<Note> notes;
@@ -69,7 +81,7 @@ private:
     void handle_input(const Input&) noexcept;
     void finish_note(int channel, int note) noexcept;
     void finish_recording() noexcept;
-    float synth_sample(int shape) noexcept;
+    void synth_sample(int shape, const float* gains, const float* pans, float* peaks, float& left, float& right) noexcept;
 public:
     bool load_clip(const std::vector<Note>& replacement, double length_beats);
     const std::vector<Note>& get_notes() const { return notes; }

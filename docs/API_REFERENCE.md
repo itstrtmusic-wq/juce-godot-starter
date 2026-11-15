@@ -1,6 +1,6 @@
 # GDScript binding reference
 
-API version: **0.6.0**. 23 classes and 228 methods are declared below.
+API version: **0.7.0**. 23 classes and 232 methods are declared below.
 
 Generated from `bindings/api.json`. These are explicit supported bindings, not a complete JUCE wrapper. Use `JUCE.get_api_manifest()` to inspect this surface at runtime.
 
@@ -335,6 +335,7 @@ JUCE implementation: `juce::AudioDeviceManager`.
 | `get_device_info()` | `—` |
 | `get_last_error()` | `—` |
 | `set_sequencer(sequencer)` | `—` |
+| `set_post_network(network)` | `—` |
 
 ## JuceChorus
 
@@ -477,3 +478,6 @@ JUCE implementation: `Native sample-timed clip transport with JUCE ADSR and MIDI
 | `prepare(sample_rate, channels)` | `int(2)` |
 | `process(buffer)` | `—` |
 | `get_last_error()` | `—` |
+| `set_channel_settings(channel, settings)` | `—` |
+| `get_channel_settings(channel)` | `—` |
+| `get_channel_peaks()` | `—` |

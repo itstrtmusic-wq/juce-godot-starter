@@ -200,7 +200,7 @@ func _notification(what: int) -> void:
         queue_redraw()
 
 func _draw() -> void:
-    draw_rect(Rect2(Vector2.ZERO, size), Color("111a27"))
+    draw_rect(Rect2(Vector2.ZERO, size), _color("background", Color("111a27")))
     if _horizontal == null or document == null:
         return
     var area := _area()
@@ -211,7 +211,7 @@ func _draw() -> void:
         if not row.has_area():
             continue
         var black: bool = pitch % 12 in [1, 3, 6, 8, 10]
-        draw_rect(row, Color("141f2d") if black else Color("192635"))
+        draw_rect(row, _color("black_row", Color("141f2d")) if black else _color("white_row", Color("192635")))
         var key := Rect2(0, y, LEFT - 1, ROW - 1).intersection(Rect2(0, TOP, LEFT, area.size.y))
         draw_rect(key, Color("263448") if black else Color("cad3df"))
         draw_string(font, Vector2(4, y + 13), Piano.note_name(pitch), HORIZONTAL_ALIGNMENT_LEFT, LEFT - 8, 10,
@@ -222,7 +222,7 @@ func _draw() -> void:
         var beat := index * grid
         var x := LEFT + beat * beat_width - _horizontal.value
         var strong := is_zero_approx(fposmod(beat, 4))
-        draw_line(Vector2(x, TOP), Vector2(x, area.end.y), Color("40556c") if strong else Color("26384b"))
+        draw_line(Vector2(x, TOP), Vector2(x, area.end.y), _color("bar_line", Color("40556c")) if strong else _color("line", Color("26384b")))
     for note in document.notes:
         if _drag.is_empty() or note.id != selected:
             _draw_note(note, area, font, note.id == selected)
@@ -233,7 +233,7 @@ func _draw() -> void:
         if x >= LEFT and x <= area.end.x:
             draw_line(Vector2(x, TOP), Vector2(x, area.end.y), Color("ffcb72"), 2)
     # Draw the ruler last so scrolling notes never cover it.
-    draw_rect(Rect2(0, 0, size.x, TOP), Color("0c131e"))
+    draw_rect(Rect2(0, 0, size.x, TOP), _color("ruler", Color("0c131e")))
     for beat in range(ceili(document.length_beats) + 1):
         var x := LEFT + beat * beat_width - _horizontal.value
         if x >= LEFT and x <= area.end.x:
@@ -245,10 +245,14 @@ func _draw_note(note: Dictionary, area: Rect2, font: Font, is_selected: bool) ->
     var rect := note_rect(note).intersection(area)
     if not rect.has_area():
         return
-    draw_rect(rect, TEAL.lightened(0.2) if is_selected else TEAL.darkened(0.2))
+    var color := _color("note", TEAL)
+    draw_rect(rect, color.lightened(0.2) if is_selected else color.darkened(0.2))
     if is_selected:
         draw_rect(rect, Color("e0fff6"), false, 1)
     draw_rect(Rect2(rect.position, Vector2(rect.size.x * float(note.velocity), 2)), Color("e0fff6"))
     if rect.size.x > 30:
         draw_string(font, rect.position + Vector2(4, 12), Piano.note_name(note.note),
             HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - 6, 10, Color("102e2b"))
+
+func _color(name: String, fallback: Color) -> Color:
+    return get_theme_color(name, "DawPianoRoll") if has_theme_color(name, "DawPianoRoll") else fallback

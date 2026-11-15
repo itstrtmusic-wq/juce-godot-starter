@@ -115,7 +115,7 @@ func add_note(pitch: int, start: float, duration: float, velocity := 0.8, channe
     var id := _next_id
     _next_id += 1
     notes.append({"id": id, "note": pitch, "start": start, "length": duration,
-        "velocity": velocity, "channel": channel})
+        "velocity": float(PackedFloat32Array([velocity])[0]), "channel": channel})
     _remember()
     return id
 
@@ -123,7 +123,7 @@ func _valid_note(pitch: int, start: float, duration: float, strength: float, cha
     return pitch >= 0 and pitch <= 127 and channel >= 1 and channel <= 16 \
         and is_finite(start) and is_finite(duration) and is_finite(strength) \
         and start >= 0 and duration > 0 and start + duration > start and start + duration <= length_beats + 0.000000001 \
-        and strength > 0 and strength <= 1
+        and strength > 0 and strength <= 1 and PackedFloat32Array([strength])[0] > 0
 
 func find_note(id: int) -> Dictionary:
     for note in notes:
@@ -137,7 +137,7 @@ func update_note(id: int, pitch: int, start: float, duration: float, strength: f
             note.note = pitch
             note.start = start
             note.length = duration
-            note.velocity = strength
+            note.velocity = float(PackedFloat32Array([strength])[0])
             _remember()
             return true
     return _fail("Note change is outside the clip or parameter range.")
