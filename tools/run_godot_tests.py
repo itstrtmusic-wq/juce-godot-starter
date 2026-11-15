@@ -42,6 +42,7 @@ for with_extension in (False, True):
 checks = [(editor_flags, None),
           (['--script', 'res://api_test.gd'], 'JUCE API:'),
           (['--script', 'res://expansion_test.gd'], 'JUCE expansion:'),
+          (['--script', 'res://keyboard_test.gd'], 'JUCE keyboard:'),
           (['--script', 'res://smoke_test.gd'], 'GDScript registration'),
           (['--script', 'res://examples/offline_processing.gd'], 'Rendered:'),
           (['--script', 'res://examples/preset_render.gd'], 'Saved patch and rendered:'),
